@@ -47,10 +47,10 @@
   .guide {
     width: min(1080px, calc(100% - 32px));
     margin: 0 auto;
-    padding: 10px 0 36px;
+    padding: 72px 0 28px;
   }
   .hero {
-    padding: 14px 0 18px;
+    padding: 0 0 18px;
     border-bottom: 1px solid var(--line);
   }
   .kicker {
@@ -82,13 +82,6 @@
     color: var(--accent-2);
     font-style: normal;
   }
-  .hero p {
-    max-width: 720px;
-    margin: 10px 0 0;
-    color: var(--ink-2);
-    font-size: 14px;
-  }
-
   .step {
     display: grid;
     grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
@@ -218,24 +211,6 @@
     font-weight: 700;
     white-space: nowrap;
   }
-  .finale {
-    padding: 28px 0 4px;
-    text-align: center;
-  }
-  .finale h2 {
-    margin: 0 0 10px;
-    font-size: clamp(28px, 4vw, 42px);
-  }
-  .finale em {
-    color: var(--accent-2);
-    font-style: normal;
-  }
-  .finale p {
-    margin: 0 auto;
-    max-width: 560px;
-    color: var(--ink-2);
-  }
-
   .lightbox[hidden] { display: none; }
   .lightbox {
     position: fixed;
@@ -287,7 +262,7 @@
   @media (max-width: 860px) {
     .guide {
       width: min(100% - 28px, 720px);
-      padding-top: 8px;
+      padding-top: 64px;
     }
     .step {
       grid-template-columns: 1fr;
@@ -309,7 +284,6 @@
   <section class="hero">
     <div class="kicker">ikun API</div>
     <h1>使用指南：五步上手 <em>AI 网关</em></h1>
-    <p>从购买订阅、创建 API 密钥，到游乐场测试和接入 Codex / Claude Code。此页面已按 NewAPI 关于页嵌入场景适配。</p>
   </section>
 
   <article class="step">
@@ -448,11 +422,6 @@
       </figure>
     </div>
   </article>
-
-  <section class="finale">
-    <h2>开始 <em>创造</em></h2>
-    <p>你的 AI 网关已就位。现在，是写代码的时候了。</p>
-  </section>
 </main>
 
 <div class="lightbox" id="image-lightbox" hidden aria-modal="true" role="dialog" aria-label="教程截图预览">
