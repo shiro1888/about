@@ -59,6 +59,9 @@
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
+  body.is-lightbox-open {
+    overflow: hidden;
+  }
   ::selection { background: var(--accent); color: var(--paper); }
 
   /* paper grain texture */
@@ -353,45 +356,143 @@
     .step-aside { padding-top: 0; }
   }
 
-  /* visual placeholder card */
-  .visual-card {
+  /* tutorial screenshot cards */
+  .screenshot-set {
+    display: grid;
+    gap: 16px;
+    position: sticky;
+    top: 28px;
+  }
+  .screenshot-card {
+    margin: 0;
     border: 1px solid var(--line);
-    background: var(--paper-2);
-    aspect-ratio: 4 / 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 22px;
+    background: color-mix(in srgb, var(--paper) 88%, white);
+    padding: 12px;
     position: relative;
     overflow: hidden;
+    cursor: zoom-in;
+    box-shadow: 0 18px 45px rgba(70, 50, 30, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  .visual-card::before {
+  .screenshot-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 24px 55px rgba(70, 50, 30, 0.13);
+  }
+  .screenshot-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 5px;
+  }
+  .screenshot-card::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(135deg, transparent 49.5%, var(--line) 49.5%, var(--line) 50.5%, transparent 50.5%),
-      linear-gradient(45deg, transparent 49.5%, var(--line) 49.5%, var(--line) 50.5%, transparent 50.5%);
-    background-size: 40px 40px;
-    opacity: 0.18;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--highlight), var(--accent-2));
     pointer-events: none;
   }
-  .visual-card .vc-meta {
+  .screenshot-card img {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid rgba(26, 20, 16, 0.08);
+  }
+  .screenshot-card figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
-    z-index: 1;
   }
-  .visual-card .vc-icon {
-    align-self: flex-end;
-    width: 56px;
-    height: 56px;
-    z-index: 1;
+  .screenshot-card .shot-index {
     color: var(--accent);
+    white-space: nowrap;
   }
-  .visual-card .vc-icon svg { width: 100%; height: 100%; }
+  .screenshot-card .shot-note {
+    text-align: right;
+  }
+  .screenshot-card--wide img { max-height: 260px; }
+  .screenshot-set--dense .screenshot-card img { max-height: 280px; }
+  @media (max-width: 900px) {
+    .screenshot-set {
+      position: static;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .screenshot-card img,
+    .screenshot-card--wide img,
+    .screenshot-set--dense .screenshot-card img {
+      max-height: 340px;
+    }
+  }
+  @media (max-width: 560px) {
+    .screenshot-set {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* image lightbox */
+  .lightbox[hidden] {
+    display: none;
+  }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 18px;
+    padding: clamp(18px, 4vw, 44px);
+    background: rgba(20, 17, 13, 0.82);
+    backdrop-filter: blur(14px);
+  }
+  .lightbox-top {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .lightbox-close {
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(247, 243, 236, 0.42);
+    border-radius: 50%;
+    background: rgba(247, 243, 236, 0.08);
+    color: #f7f3ec;
+    font-family: var(--sans);
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .lightbox-close:hover,
+  .lightbox-close:focus-visible {
+    background: #f7f3ec;
+    color: #1a1410;
+    outline: none;
+  }
+  .lightbox-stage {
+    min-height: 0;
+    display: grid;
+    place-items: center;
+  }
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    background: #fff;
+    box-shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
+  }
+  .lightbox-caption {
+    margin: 0;
+    color: #f3ead8;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-align: center;
+    text-transform: uppercase;
+  }
 
   /* highlight callout for download */
   .callout {
@@ -672,17 +773,15 @@
       </p>
     </div>
     <aside class="step-aside">
-      <div class="visual-card">
-        <span class="vc-meta">FIG. 01 / Plans</span>
-        <div class="vc-icon">
-          <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="6" y="14" width="44" height="32" rx="2"/>
-            <line x1="6" y1="22" x2="50" y2="22"/>
-            <circle cx="14" cy="32" r="2" fill="currentColor"/>
-            <line x1="22" y1="32" x2="42" y2="32"/>
-            <line x1="22" y1="38" x2="34" y2="38"/>
-          </svg>
-        </div>
+      <div class="screenshot-set" aria-label="购买订阅截图">
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-01-01.png" width="1948" height="1056" alt="订阅套餐页面，红色箭头指向可购买的套餐卡片" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 01A</span><span class="shot-note">选择套餐</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-01-02.png" width="765" height="392" alt="我的订阅页面，显示订阅套餐状态和剩余天数" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 01B</span><span class="shot-note">确认生效</span></figcaption>
+        </figure>
       </div>
     </aside>
   </article>
@@ -704,17 +803,23 @@
       <div class="warning">妥善保管你的密钥，切勿分享或上传到公开仓库。</div>
     </div>
     <aside class="step-aside">
-      <div class="visual-card">
-        <span class="vc-meta">FIG. 02 / Key</span>
-        <div class="vc-icon">
-          <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="20" cy="28" r="10"/>
-            <circle cx="20" cy="28" r="3" fill="currentColor"/>
-            <line x1="30" y1="28" x2="50" y2="28"/>
-            <line x1="42" y1="28" x2="42" y2="36"/>
-            <line x1="48" y1="28" x2="48" y2="34"/>
-          </svg>
-        </div>
+      <div class="screenshot-set" aria-label="创建 API 密钥截图">
+        <figure class="screenshot-card">
+          <img src="assets/tutorial/step-02-01.png" width="593" height="647" alt="控制台侧边栏，红色箭头指向 API 密钥入口" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 02A</span><span class="shot-note">进入 API 密钥</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-02-02.png" width="554" height="229" alt="API 密钥页面，红色箭头指向创建 API 密钥按钮" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 02B</span><span class="shot-note">创建密钥</span></figcaption>
+        </figure>
+        <figure class="screenshot-card">
+          <img src="assets/tutorial/step-02-03.png" width="1286" height="1322" alt="创建密钥表单，标注密钥自定义、分组选择和保存" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 02C</span><span class="shot-note">填写信息</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-02-04.png" width="2048" height="260" alt="API 密钥列表页面，显示刚创建好的密钥" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 02D</span><span class="shot-note">保存结果</span></figcaption>
+        </figure>
       </div>
     </aside>
   </article>
@@ -735,19 +840,23 @@
       </p>
     </div>
     <aside class="step-aside">
-      <div class="visual-card">
-        <span class="vc-meta">FIG. 03 / Test</span>
-        <div class="vc-icon">
-          <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="8" y="12" width="40" height="28" rx="2"/>
-            <line x1="14" y1="20" x2="14" y2="20.01" stroke-width="2.5"/>
-            <line x1="20" y1="20" x2="20" y2="20.01" stroke-width="2.5"/>
-            <line x1="26" y1="20" x2="26" y2="20.01" stroke-width="2.5"/>
-            <line x1="14" y1="28" x2="42" y2="28"/>
-            <line x1="14" y1="34" x2="34" y2="34"/>
-            <path d="M22 46 L34 46" stroke-linecap="round"/>
-          </svg>
-        </div>
+      <div class="screenshot-set" aria-label="游乐场测试截图">
+        <figure class="screenshot-card">
+          <img src="assets/tutorial/step-03-01.png" width="521" height="561" alt="控制台侧边栏，红色箭头指向游乐场入口" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 03A</span><span class="shot-note">进入游乐场</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-03-02.png" width="877" height="425" alt="游乐场分组下拉菜单，红色箭头指向分组选择" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 03B</span><span class="shot-note">选择分组</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-03-03.png" width="774" height="584" alt="模型选择下拉菜单，红色箭头指向模型名称" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 03C</span><span class="shot-note">选择模型</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-03-04.png" width="1211" height="559" alt="游乐场对话测试结果页面，模型已经返回回复" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 03D</span><span class="shot-note">发送测试</span></figcaption>
+        </figure>
       </div>
     </aside>
   </article>
@@ -784,16 +893,35 @@
       </p>
     </div>
     <aside class="step-aside">
-      <div class="visual-card">
-        <span class="vc-meta">FIG. 04 / Switch</span>
-        <div class="vc-icon">
-          <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="8" y="20" width="40" height="16" rx="8"/>
-            <circle cx="38" cy="28" r="5" fill="currentColor"/>
-            <line x1="14" y1="14" x2="20" y2="14"/>
-            <line x1="36" y1="42" x2="42" y2="42"/>
-          </svg>
-        </div>
+      <div class="screenshot-set screenshot-set--dense" aria-label="导入 Codex 与 Claude Code 截图">
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-04-01.png" width="2048" height="513" alt="API 密钥列表的更多菜单，红色箭头指向导入配置入口" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 04A</span><span class="shot-note">打开导入</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-04-02.png" width="596" height="458" alt="API 密钥更多菜单，红色箭头指向 CC 切换选项" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 04B</span><span class="shot-note">选择 CC 切换</span></figcaption>
+        </figure>
+        <figure class="screenshot-card">
+          <img src="assets/tutorial/step-04-03.png" width="708" height="532" alt="导入 CC Switch 弹窗，红色箭头指向 Codex 应用类型" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 04C</span><span class="shot-note">选择应用</span></figcaption>
+        </figure>
+        <figure class="screenshot-card">
+          <img src="assets/tutorial/step-04-04.png" width="744" height="666" alt="导入 CC Switch 弹窗，红色箭头指向模型下拉菜单" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 04D</span><span class="shot-note">选择模型</span></figcaption>
+        </figure>
+        <figure class="screenshot-card">
+          <img src="assets/tutorial/step-04-05.png" width="805" height="521" alt="导入 CC Switch 弹窗，已填入 gpt-5.5 并准备打开 CC Switch" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 04E</span><span class="shot-note">打开工具</span></figcaption>
+        </figure>
+        <figure class="screenshot-card">
+          <img src="assets/tutorial/step-04-06.png" width="1125" height="670" alt="确认导入供应商配置弹窗，API 密钥已打码，红色箭头指向导入按钮" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 04F</span><span class="shot-note">确认导入</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-04-07.png" width="1111" height="292" alt="CC Switch 供应商列表，My Codex 配置已经出现在列表中" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 04G</span><span class="shot-note">配置完成</span></figcaption>
+        </figure>
       </div>
     </aside>
   </article>
@@ -814,14 +942,15 @@
       </p>
     </div>
     <aside class="step-aside">
-      <div class="visual-card">
-        <span class="vc-meta">FIG. 05 / Done</span>
-        <div class="vc-icon">
-          <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="28" cy="28" r="22"/>
-            <path d="M18 28 L25 35 L38 22" stroke-width="2"/>
-          </svg>
-        </div>
+      <div class="screenshot-set" aria-label="重启后使用截图">
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-05-01.png" width="928" height="478" alt="Codex 配置文件片段，红色箭头指向 model_provider 和模型设置" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 05A</span><span class="shot-note">配置写入</span></figcaption>
+        </figure>
+        <figure class="screenshot-card screenshot-card--wide">
+          <img src="assets/tutorial/step-05-02.png" width="1312" height="1047" alt="Codex 对话界面，输入测试问题后已经收到回复" loading="lazy" decoding="async">
+          <figcaption><span class="shot-index">FIG. 05B</span><span class="shot-note">重启可用</span></figcaption>
+        </figure>
       </div>
     </aside>
   </article>
@@ -847,6 +976,16 @@
 
 </main>
 
+<div class="lightbox" id="image-lightbox" hidden aria-modal="true" role="dialog" aria-label="教程截图预览">
+  <div class="lightbox-top">
+    <button class="lightbox-close" type="button" aria-label="关闭预览">×</button>
+  </div>
+  <div class="lightbox-stage">
+    <img class="lightbox-image" alt="">
+  </div>
+  <p class="lightbox-caption"></p>
+</div>
+
 <script>
   // scroll reveal
   const observer = new IntersectionObserver((entries) => {
@@ -858,6 +997,58 @@
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
   document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  const lightbox = document.querySelector('#image-lightbox');
+  const lightboxImage = lightbox.querySelector('.lightbox-image');
+  const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+  const lightboxClose = lightbox.querySelector('.lightbox-close');
+  const screenshotCards = document.querySelectorAll('.screenshot-card');
+  let lastFocusedCard = null;
+
+  function openLightbox(card) {
+    const image = card.querySelector('img');
+    const caption = card.querySelector('figcaption')?.innerText.trim() || image.alt;
+    lastFocusedCard = card;
+    lightboxImage.src = image.currentSrc || image.src;
+    lightboxImage.alt = image.alt;
+    lightboxCaption.textContent = caption;
+    lightbox.hidden = false;
+    document.body.classList.add('is-lightbox-open');
+    lightboxClose.focus();
+  }
+
+  function closeLightbox() {
+    lightbox.hidden = true;
+    lightboxImage.removeAttribute('src');
+    document.body.classList.remove('is-lightbox-open');
+    lastFocusedCard?.focus();
+  }
+
+  screenshotCards.forEach((card) => {
+    const caption = card.querySelector('figcaption')?.innerText.trim();
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', caption ? `放大截图 ${caption}` : '放大教程截图');
+    card.addEventListener('click', () => openLightbox(card));
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openLightbox(card);
+      }
+    });
+  });
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox || event.target.classList.contains('lightbox-stage')) {
+      closeLightbox();
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (!lightbox.hidden && event.key === 'Escape') {
+      closeLightbox();
+    }
+  });
 </script>
 
 </body>
