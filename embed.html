@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>使用指南 · ikun API</title>
+<meta name="description" content="ikun API 的 NewAPI 关于页嵌入版使用指南">
+<style>
+  :root {
+    --bg: transparent;
+    --surface: #ffffff;
+    --surface-soft: #f9fafb;
+    --ink: #111827;
+    --ink-2: #374151;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #22c55e;
+    --accent-2: #ea580c;
+    --shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body.is-lightbox-open { overflow: hidden; }
+  a { color: inherit; }
+  code {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface-soft);
+    padding: 2px 6px;
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+
+  .guide {
+    width: min(1080px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 10px 0 36px;
+  }
+  .hero {
+    padding: 14px 0 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .kicker::before {
+    content: "";
+    width: 28px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+  .hero h1 {
+    max-width: 760px;
+    margin: 0;
+    font-size: clamp(26px, 3.2vw, 36px);
+    line-height: 1.16;
+    letter-spacing: 0;
+  }
+  .hero h1 em {
+    color: var(--accent-2);
+    font-style: normal;
+  }
+  .hero p {
+    max-width: 720px;
+    margin: 10px 0 0;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
+    gap: clamp(20px, 4vw, 40px);
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .step-copy {
+    min-width: 0;
+  }
+  .step-number {
+    margin-bottom: 14px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .step-title {
+    margin: 0 0 14px;
+    color: var(--ink);
+    font-size: clamp(21px, 2.4vw, 28px);
+    line-height: 1.18;
+    letter-spacing: 0;
+  }
+  .step-text {
+    max-width: 58ch;
+    margin: 0 0 12px;
+    color: var(--ink-2);
+  }
+  .warning {
+    margin-top: 18px;
+    border-left: 3px solid var(--accent-2);
+    background: #fff7ed;
+    padding: 12px 14px;
+    color: #7c2d12;
+    font-size: 14px;
+  }
+  .callout {
+    margin-top: 20px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    padding: 18px;
+  }
+  .callout-label {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .callout-name {
+    margin-top: 8px;
+    color: var(--ink);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    border-radius: 8px;
+    background: #111827;
+    padding: 10px 14px;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .platform-row {
+    margin-top: 10px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    align-content: start;
+  }
+  .shot {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    padding: 10px;
+    cursor: zoom-in;
+    box-shadow: var(--shadow);
+  }
+  .shot:hover {
+    border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
+  }
+  .shot:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+  .shot--wide {
+    grid-column: 1 / -1;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    max-height: 290px;
+    object-fit: contain;
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    border-radius: 6px;
+    background: #fff;
+  }
+  .shot--wide img {
+    max-height: 220px;
+  }
+  .shot figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .shot-index {
+    color: var(--accent);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .finale {
+    padding: 28px 0 4px;
+    text-align: center;
+  }
+  .finale h2 {
+    margin: 0 0 10px;
+    font-size: clamp(28px, 4vw, 42px);
+  }
+  .finale em {
+    color: var(--accent-2);
+    font-style: normal;
+  }
+  .finale p {
+    margin: 0 auto;
+    max-width: 560px;
+    color: var(--ink-2);
+  }
+
+  .lightbox[hidden] { display: none; }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 16px;
+    padding: clamp(16px, 4vw, 42px);
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(12px);
+  }
+  .lightbox-top {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .lightbox-close {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .lightbox-stage {
+    min-height: 0;
+    display: grid;
+    place-items: center;
+  }
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 26px 80px rgba(0, 0, 0, 0.38);
+  }
+  .lightbox-caption {
+    margin: 0;
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  @media (max-width: 860px) {
+    .guide {
+      width: min(100% - 28px, 720px);
+      padding-top: 8px;
+    }
+    .step {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      padding: 24px 0;
+    }
+    .shots {
+      grid-template-columns: 1fr;
+    }
+    .shot img,
+    .shot--wide img {
+      max-height: 260px;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="guide">
+  <section class="hero">
+    <div class="kicker">ikun API</div>
+    <h1>使用指南：五步上手 <em>AI 网关</em></h1>
+    <p>从购买订阅、创建 API 密钥，到游乐场测试和接入 Codex / Claude Code。此页面已按 NewAPI 关于页嵌入场景适配。</p>
+  </section>
+
+  <article class="step">
+    <div class="step-copy">
+      <div class="step-number">Step 01</div>
+      <h2 class="step-title">购买订阅</h2>
+      <p class="step-text">在主页选择适合你需求的订阅套餐，新用户体验、轻量、中度或重度都可以按需选择。</p>
+      <p class="step-text">完成支付后，套餐立即激活，开始消费配额。</p>
+    </div>
+    <div class="shots" aria-label="购买订阅截图">
+      <figure class="shot shot--wide">
+        <img src="assets/tutorial/step-01-01.png" width="1948" height="1056" alt="订阅套餐页面，红色箭头指向可购买的套餐卡片" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">01A</span><span>选择套餐</span></figcaption>
+      </figure>
+      <figure class="shot shot--wide">
+        <img src="assets/tutorial/step-01-02.png" width="765" height="392" alt="我的订阅页面，显示订阅套餐状态和剩余天数" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">01B</span><span>确认生效</span></figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <article class="step">
+    <div class="step-copy">
+      <div class="step-number">Step 02</div>
+      <h2 class="step-title">创建 API 密钥</h2>
+      <p class="step-text">进入控制台，点击 <strong>API 密钥</strong> 菜单，创建一个自己的密钥。</p>
+      <p class="step-text">给密钥起一个清晰可辨的名字，例如 <code>codex-mac</code>，生成后立即复制保存。</p>
+      <div class="warning">密钥只展示一次，请不要分享或上传到公开仓库。</div>
+    </div>
+    <div class="shots" aria-label="创建 API 密钥截图">
+      <figure class="shot">
+        <img src="assets/tutorial/step-02-01.png" width="593" height="647" alt="控制台侧边栏，红色箭头指向 API 密钥入口" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">02A</span><span>入口</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-02-02.png" width="554" height="229" alt="API 密钥页面，红色箭头指向创建 API 密钥按钮" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">02B</span><span>创建</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-02-03.png" width="1286" height="1322" alt="创建密钥表单，标注密钥自定义、分组选择和保存" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">02C</span><span>填写</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-02-04.png" width="2048" height="260" alt="API 密钥列表页面，显示刚创建好的密钥" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">02D</span><span>保存</span></figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <article class="step">
+    <div class="step-copy">
+      <div class="step-number">Step 03</div>
+      <h2 class="step-title">游乐场测试</h2>
+      <p class="step-text">进入游乐场，选择分组与模型，输入一句测试提示词，确认密钥、额度和模型可正常响应。</p>
+    </div>
+    <div class="shots" aria-label="游乐场测试截图">
+      <figure class="shot">
+        <img src="assets/tutorial/step-03-01.png" width="521" height="561" alt="控制台侧边栏，红色箭头指向游乐场入口" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">03A</span><span>入口</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-03-02.png" width="877" height="425" alt="游乐场分组下拉菜单，红色箭头指向分组选择" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">03B</span><span>分组</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-03-03.png" width="774" height="584" alt="模型选择下拉菜单，红色箭头指向模型名称" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">03C</span><span>模型</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-03-04.png" width="1211" height="559" alt="游乐场对话测试结果页面，模型已经返回回复" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">03D</span><span>测试</span></figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <article class="step">
+    <div class="step-copy">
+      <div class="step-number">Step 04</div>
+      <h2 class="step-title">接入 Codex 与 Claude Code</h2>
+      <p class="step-text">在 API 密钥页面打开导入配置，以 Windows 端为例，借助 CC Switch 完成客户端配置。</p>
+      <div class="callout">
+        <div class="callout-label">Windows 客户端工具</div>
+        <div class="callout-name">CC Switch v3.14.1</div>
+        <a class="download-btn" href="https://github.com/farion1231/cc-switch/releases/download/v3.14.1/CC-Switch-v3.14.1-Windows.msi" target="_blank" rel="noopener">下载 MSI 安装包</a>
+        <div class="platform-row">Windows · MSI · 64-bit</div>
+        <div class="warning">务必下载 MSI 安装版，不要选便携版，否则注册表里不会写入 CC Switch 路径。</div>
+      </div>
+    </div>
+    <div class="shots" aria-label="接入 Codex 与 Claude Code 截图">
+      <figure class="shot">
+        <img src="assets/tutorial/step-04-01.png" width="2048" height="513" alt="API 密钥列表的更多菜单，红色箭头指向导入配置入口" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">04A</span><span>导入</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-04-02.png" width="596" height="458" alt="API 密钥更多菜单，红色箭头指向 CC 切换选项" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">04B</span><span>CC 切换</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-04-03.png" width="708" height="532" alt="导入 CC Switch 弹窗，红色箭头指向 Codex 应用类型" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">04C</span><span>应用</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-04-04.png" width="744" height="666" alt="导入 CC Switch 弹窗，红色箭头指向模型下拉菜单" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">04D</span><span>模型</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-04-05.png" width="805" height="521" alt="导入 CC Switch 弹窗，已填入 gpt-5.5 并准备打开 CC Switch" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">04E</span><span>打开工具</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-04-06.png" width="1125" height="670" alt="确认导入供应商配置弹窗，API 密钥已打码，红色箭头指向导入按钮" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">04F</span><span>确认</span></figcaption>
+      </figure>
+      <figure class="shot shot--wide">
+        <img src="assets/tutorial/step-04-07.png" width="1111" height="292" alt="CC Switch 供应商列表，My Codex 配置已经出现在列表中" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">04G</span><span>完成</span></figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <article class="step">
+    <div class="step-copy">
+      <div class="step-number">Step 05</div>
+      <h2 class="step-title">重启即用</h2>
+      <p class="step-text">配置写入后，重启 Codex 或 Claude Code，让客户端重新加载新的密钥与端点。</p>
+      <p class="step-text">到这里，一切就绪。</p>
+    </div>
+    <div class="shots" aria-label="重启后使用截图">
+      <figure class="shot">
+        <img src="assets/tutorial/step-05-01.png" width="928" height="478" alt="Codex 配置文件片段，红色箭头指向 model_provider 和模型设置" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">05A</span><span>配置</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/tutorial/step-05-02.png" width="1312" height="1047" alt="Codex 对话界面，输入测试问题后已经收到回复" loading="lazy" decoding="async">
+        <figcaption><span class="shot-index">05B</span><span>可用</span></figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <section class="finale">
+    <h2>开始 <em>创造</em></h2>
+    <p>你的 AI 网关已就位。现在，是写代码的时候了。</p>
+  </section>
+</main>
+
+<div class="lightbox" id="image-lightbox" hidden aria-modal="true" role="dialog" aria-label="教程截图预览">
+  <div class="lightbox-top">
+    <button class="lightbox-close" type="button" aria-label="关闭预览">×</button>
+  </div>
+  <div class="lightbox-stage">
+    <img class="lightbox-image" alt="">
+  </div>
+  <p class="lightbox-caption"></p>
+</div>
+
+<script>
+  const lightbox = document.querySelector('#image-lightbox');
+  const lightboxImage = lightbox.querySelector('.lightbox-image');
+  const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+  const lightboxClose = lightbox.querySelector('.lightbox-close');
+  let lastFocusedCard = null;
+
+  function openLightbox(card) {
+    const image = card.querySelector('img');
+    const caption = card.querySelector('figcaption')?.innerText.trim() || image.alt;
+    lastFocusedCard = card;
+    lightboxImage.src = image.currentSrc || image.src;
+    lightboxImage.alt = image.alt;
+    lightboxCaption.textContent = caption;
+    lightbox.hidden = false;
+    document.body.classList.add('is-lightbox-open');
+    lightboxClose.focus();
+  }
+
+  function closeLightbox() {
+    lightbox.hidden = true;
+    lightboxImage.removeAttribute('src');
+    document.body.classList.remove('is-lightbox-open');
+    lastFocusedCard?.focus();
+  }
+
+  document.querySelectorAll('.shot').forEach((card) => {
+    const caption = card.querySelector('figcaption')?.innerText.trim();
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', caption ? `放大截图 ${caption}` : '放大教程截图');
+    card.addEventListener('click', () => openLightbox(card));
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openLightbox(card);
+      }
+    });
+  });
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox || event.target.classList.contains('lightbox-stage')) {
+      closeLightbox();
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (!lightbox.hidden && event.key === 'Escape') {
+      closeLightbox();
+    }
+  });
+</script>
+</body>
+</html>
